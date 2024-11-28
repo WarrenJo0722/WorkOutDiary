@@ -24,10 +24,26 @@ class RoutineActivity : AppCompatActivity() {
     private var isAllClicked = false
     private var isCardioClicked = false
 
+    private lateinit var chestButton: Button
+    private lateinit var sholderButton: Button
+    private lateinit var backButton: Button
+    private lateinit var absButton: Button
+    private lateinit var armButton: Button
+    private lateinit var legButton: Button
+    private lateinit var hipButton: Button
+    private lateinit var allButton: Button
+    private lateinit var cardioButton: Button
+
+    val exercises: MutableList<Exercise> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_routine)
+
+        val listView = findViewById<ListView>(R.id.routineList)
+        val adapter = ListViewAdapter2(exercises)
+        listView.adapter = adapter
 
         //변수 초기화
         val saveButton = findViewById<Button>(R.id.saveButton)
@@ -35,69 +51,75 @@ class RoutineActivity : AppCompatActivity() {
         val routineNameTextView = findViewById<TextView>(R.id.routineNameTv)
         val routineEditText = findViewById<EditText>(R.id.routineET)
         val targetTextView = findViewById<TextView>(R.id.targetTv)
-        val chestButton = findViewById<Button>(R.id.chestButton)
-        val sholderButton = findViewById<Button>(R.id.sholderButton)
-        val backButton = findViewById<Button>(R.id.backButton)
-        val absButton = findViewById<Button>(R.id.absButton)
-        val armButton = findViewById<Button>(R.id.armButton)
-        val legButton = findViewById<Button>(R.id.legButton)
-        val hipButton = findViewById<Button>(R.id.hipButton)
-        val allButton = findViewById<Button>(R.id.allButton)
-        val cardioButton = findViewById<Button>(R.id.cardioButton)
         val infoTextView = findViewById<TextView>(R.id.infoTv)
         val addButton = findViewById<Button>(R.id.addButton)
+        addButton.setOnClickListener {
+            exercises.add(Exercise.ABS)
+            adapter.notifyDataSetChanged()
+        }
+
+        // 버튼 초기화
+        chestButton = findViewById(R.id.chestButton)
+        sholderButton = findViewById(R.id.sholderButton)
+        backButton = findViewById(R.id.backButton)
+        absButton = findViewById(R.id.absButton)
+        armButton = findViewById(R.id.armButton)
+        legButton = findViewById(R.id.legButton)
+        hipButton = findViewById(R.id.hipButton)
+        allButton = findViewById(R.id.allButton)
+        cardioButton = findViewById(R.id.cardioButton)
 
 
         // 입력값을 저장할 변수
         var routineText: String = ""
 
         // EditText 클릭 시 초기화
-        routineEditText.setOnClickListener {
-            routineEditText.text.clear() // EditText 내용 초기화
-        }
+//        routineEditText.setOnClickListener {
+//            routineEditText.text.clear() // EditText 내용 초기화
+//        }
 
         // 각 버튼의 클릭 리스너 설정
         chestButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(chestButton, ::isChestClicked)
         }
         sholderButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(sholderButton, ::isSholderClicked)
         }
         backButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(backButton, ::isBackClicked)
         }
         absButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(absButton, ::isAbsClicked)
         }
         armButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(armButton, ::isArmClicked)
         }
         legButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(legButton, ::isLegClicked)
         }
         hipButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(hipButton, ::isHipClicked)
         }
         allButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(allButton, ::isAllClicked)
         }
         cardioButton.setOnClickListener {
+            resetButtonStates() // 다른 버튼들 초기화
             toggleButtonState(cardioButton, ::isCardioClicked)
         }
 
-        val listView = findViewById<ListView>(R.id.routineList)
-
-        val items = mutableListOf<ListViewItem2>()
-
-        items.add(ListViewItem2("벤치", "5세트"))
-        items.add(ListViewItem2("벤치", "5세트"))
-        items.add(ListViewItem2("벤치", "5세트"))
-
-        val adapter = ListViewAdapter2(items)
-        listView.adapter = adapter
-
         saveButton.setOnClickListener {
-            // StatusActivity로 전환
+            SharedData.routines.add(Routine(routineEditText.text.toString(), exercises))
+            finish()
+            /*// StatusActivity로 전환
             val intent = Intent(this, IsRoutineActivity::class.java)
             // 데이터 전달
             val selectedCategories = mutableListOf<String>()
@@ -125,7 +147,7 @@ class RoutineActivity : AppCompatActivity() {
 
             intent.putExtra("routineItems", routineItems)
             setResult(RESULT_OK, intent)
-            startActivity(intent)
+            startActivity(intent)*/
         }
 
     }
@@ -142,4 +164,44 @@ class RoutineActivity : AppCompatActivity() {
         clickedState.set(!clickedState.get()) // 상태 토글
     }
 
+    // 모든 버튼 상태를 초기화하는 함수
+    private fun resetButtonStates() {
+        isChestClicked = false
+        isSholderClicked = false
+        isBackClicked = false
+        isAbsClicked = false
+        isArmClicked = false
+        isLegClicked = false
+        isHipClicked = false
+        isAllClicked = false
+        isCardioClicked = false
+
+        // 버튼 배경색 초기화 (해제 상태)
+        chestButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        chestButton.setTextColor(Color.parseColor("#353232"))
+
+        sholderButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        sholderButton.setTextColor(Color.parseColor("#353232"))
+
+        backButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        backButton.setTextColor(Color.parseColor("#353232"))
+
+        absButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        absButton.setTextColor(Color.parseColor("#353232"))
+
+        armButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        armButton.setTextColor(Color.parseColor("#353232"))
+
+        legButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        legButton.setTextColor(Color.parseColor("#353232"))
+
+        hipButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        hipButton.setTextColor(Color.parseColor("#353232"))
+
+        allButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        allButton.setTextColor(Color.parseColor("#353232"))
+
+        cardioButton.setBackgroundColor(Color.parseColor("#E7E5E5"))
+        cardioButton.setTextColor(Color.parseColor("#353232"))
+    }
 }

@@ -2,7 +2,9 @@ package com.example.workoutdiary
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -33,5 +35,18 @@ class StatusActivity  : AppCompatActivity() {
             val intent = Intent(this, RoutineActivity::class.java)
             startActivity(intent)
         }
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // 루틴 리스트뷰
+        SharedData.routines.add(Routine("아침 운동 루틴")) // 루틴 만들기
+        val listView = findViewById<ListView>(R.id.listView)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, SharedData.routines.map { it.name })
+        listView.adapter = adapter
     }
 }
